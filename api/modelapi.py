@@ -9,7 +9,7 @@ from utils.dataset import ImgDataset
 from utils.train import train
 
 
-class GeneratorBuilder:
+class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
     def __init__(self, files_a, files_b, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
                  discr_scheduler='default', criterion='bceloss', epochs=200, hold_discr=True):
