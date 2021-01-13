@@ -1,5 +1,6 @@
 from torch.utils.data import Dataset
 from torchvision import transforms
+from PIL import Image
 
 
 class ImgDataset(Dataset):
@@ -16,6 +17,10 @@ class ImgDataset(Dataset):
 
     @staticmethod
     def image_loader(img_a, img_b):
+        img_a = Image.open(img_a)
+        img_a.load()
+        img_b = Image.open(img_b)
+        img_b.load()
         loader = transforms.Compose([
             transforms.Resize(512),
             transforms.CenterCrop(512),
