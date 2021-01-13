@@ -1,16 +1,17 @@
 from torch.utils.data import Dataset
 from torchvision import transforms
 from PIL import Image
+from pathlib import Path
 
 
 class ImgDataset(Dataset):
     """Dataset for CycleGAN"""
 
-    def __init__(self, files_a, files_b):
+    def __init__(self, files_a_dir, files_b_dir):
         super().__init__()
-        self.files_a = files_a
-        self.files_b = files_b
-        self.length = len(files_a)
+        self.files_a = list(Path(files_a_dir).rglob('*.jpg'))
+        self.files_b = list(Path(files_b_dir).rglob('*.jpg'))
+        self.length = len(self.files_a)
 
     def __len__(self):
         return self.length
