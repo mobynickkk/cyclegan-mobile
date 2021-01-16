@@ -9,8 +9,8 @@ class ImgDataset(Dataset):
 
     def __init__(self, files_a_dir, files_b_dir):
         super().__init__()
-        self.files_a = list(Path(files_a_dir).rglob('*.jpg'))
-        self.files_b = list(Path(files_b_dir).rglob('*.jpg'))
+        self.files_a = tuple(Path(files_a_dir).rglob('*.jpg'))
+        self.files_b = tuple(Path(files_b_dir).rglob('*.jpg'))
         self.length = len(self.files_a)
 
     def __len__(self):
