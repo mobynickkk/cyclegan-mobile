@@ -1,3 +1,4 @@
+import torch
 from torch.utils.data import Dataset
 from torchvision import transforms
 from PIL import Image
@@ -18,6 +19,9 @@ class ImgDataset(Dataset):
 
     @staticmethod
     def image_loader(img_a, img_b):
+        if not torch.cuda.is_available():
+            raise BaseException('GPU is not available')
+        device = torch.device('cuda')
         img_a = Image.open(img_a)
         img_a.load()
         img_b = Image.open(img_b)
@@ -27,8 +31,8 @@ class ImgDataset(Dataset):
             transforms.CenterCrop(512),
             transforms.ToTensor()
         ])
-        img_a = loader(img_a)
-        img_b = loader(img_b)
+        img_a = loader(img_a).to(device)
+        img_b = loader(img_b).to(device)
         return img_a, img_b
 
     def __getitem__(self, index):

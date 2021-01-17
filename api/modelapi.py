@@ -13,11 +13,14 @@ class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
     def __init__(self, files_a, files_b, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
                  discr_scheduler='default', criterion='bceloss', epochs=200, hold_discr=True):
+        if not torch.cuda.is_available():
+            raise BaseException('GPU is not available')
+        device = torch.device('cuda')
         self.dataloader = DataLoader(ImgDataset(files_a, files_b), batch_size=1, shuffle=True)
-        self.generator_a2b = Generator()
-        self.generator_b2a = Generator()
-        self.discriminator_a = Discriminator()
-        self.discriminator_b = Discriminator()
+        self.generator_a2b = Generator().to(device)
+        self.generator_b2a = Generator().to(device)
+        self.discriminator_a = Discriminator().to(device)
+        self.discriminator_b = Discriminator().to(device)
         if gen_optimizer == 'Adam':
             self.gen_optimizer = optim.Adam(chain(
                 self.generator_a2b.parameters(),
