@@ -102,4 +102,4 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
         generator_scheduler.step()
         discriminator_scheduler.step()
 
-        return generators_losses, discriminators_losses
+    return generators_losses, discriminators_losses
