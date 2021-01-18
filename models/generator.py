@@ -12,64 +12,64 @@ class Generator(nn.Module):
         )
         self.pool0 = nn.MaxPool2d(2, return_indices=True)
         self.e1 = nn.Sequential(
-            nn.Conv2d(32, 128, 3, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(128),
+            nn.Conv2d(32, 64, 3, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool1 = nn.MaxPool2d(2, return_indices=True)
         self.e2 = nn.Sequential(
-            nn.Conv2d(128, 256, 3, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(256),
+            nn.Conv2d(64, 128, 3, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(128),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool2 = nn.MaxPool2d(2, return_indices=True)
         self.e3 = nn.Sequential(
-            nn.Conv2d(256, 512, 3, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(512),
+            nn.Conv2d(128, 256, 3, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(256),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool3 = nn.MaxPool2d(2, return_indices=True)
 
         self.bottleneck0 = nn.Sequential(
-            nn.Conv2d(512, 2560, 1),
-            nn.BatchNorm2d(2560),
+            nn.Conv2d(256, 512, 1),
+            nn.BatchNorm2d(512),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(2560, 2560, 3, groups=2560, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(2560),
+            nn.Conv2d(512, 512, 3, groups=512, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(512),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(2560, 512, 1),
-            nn.BatchNorm2d(512)
+            nn.Conv2d(512, 256, 1),
+            nn.BatchNorm2d(256)
         )
 
         self.bottleneck1 = nn.Sequential(
-            nn.Conv2d(512, 2560, 1),
-            nn.BatchNorm2d(2560),
+            nn.Conv2d(256, 512, 1),
+            nn.BatchNorm2d(512),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(2560, 2560, 3, groups=2560, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(2560),
+            nn.Conv2d(512, 512, 3, groups=512, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(512),
             nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(2560, 512, 1),
-            nn.BatchNorm2d(512)
+            nn.Conv2d(512, 256, 1),
+            nn.BatchNorm2d(256)
         )
 
         self.d0 = nn.Sequential(
-            nn.Conv2d(2048, 512, 3, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(512),
+            nn.Conv2d(256, 128, 3, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(128),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
 
         self.unpool0 = nn.MaxUnpool2d(2)
 
         self.d1 = nn.Sequential(
-            nn.Conv2d(512, 128, 3, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(128),
+            nn.Conv2d(128, 64, 3, padding=1, padding_mode='reflect'),
+            nn.BatchNorm2d(64),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
 
         self.unpool1 = nn.MaxUnpool2d(2)
 
         self.d2 = nn.Sequential(
-            nn.Conv2d(128, 32, 3, padding=1, padding_mode='reflect'),
+            nn.Conv2d(64, 32, 3, padding=1, padding_mode='reflect'),
             nn.BatchNorm2d(32),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )

@@ -6,52 +6,52 @@ class Discriminator(nn.Module):
     def __init__(self):
         super(Discriminator, self).__init__()
         self.c0 = nn.Sequential(
-            nn.Conv2d(3, 32, 3),
-            nn.BatchNorm2d(32),
+            nn.Conv2d(3, 16, 3),
+            nn.BatchNorm2d(16),
             nn.ReLU6(True)
         )
 
         self.inv_res0 = nn.Sequential(
-            nn.Conv2d(32, 192, 1),
-            nn.BatchNorm2d(192),
+            nn.Conv2d(16, 96, 1),
+            nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(192, 192, 3, groups=192),
-            nn.BatchNorm2d(192),
+            nn.Conv2d(96, 96, 3, groups=96),
+            nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(192, 32, 1),
-            nn.BatchNorm2d(32)
+            nn.Conv2d(96, 16, 1),
+            nn.BatchNorm2d(16)
         )
 
         self.inv_res1 = nn.Sequential(
-            nn.Conv2d(32, 192, 1),
-            nn.BatchNorm2d(192),
+            nn.Conv2d(16, 96, 1),
+            nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(192, 192, 3, groups=192),
-            nn.BatchNorm2d(192),
+            nn.Conv2d(96, 96, 3, groups=96),
+            nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(192, 32, 1),
-            nn.BatchNorm2d(32)
+            nn.Conv2d(96, 16, 1),
+            nn.BatchNorm2d(16)
         )
 
         self.inv_res2 = nn.Sequential(
-            nn.Conv2d(32, 192, 1),
-            nn.BatchNorm2d(192),
+            nn.Conv2d(16, 96, 1),
+            nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(192, 192, 3, groups=192),
-            nn.BatchNorm2d(192),
+            nn.Conv2d(96, 96, 3, groups=96),
+            nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(192, 64, 1),
-            nn.BatchNorm2d(64)
+            nn.Conv2d(96, 32, 1),
+            nn.BatchNorm2d(32)
         )
 
         self.c1 = nn.Sequential(
-            nn.Conv2d(64, 512, 1),
-            nn.BatchNorm2d(512),
+            nn.Conv2d(32, 196, 1),
+            nn.BatchNorm2d(196),
             nn.ReLU6(True),
-            nn.Conv2d(512, 512, 3, groups=512),
-            nn.BatchNorm2d(512),
+            nn.Conv2d(196, 196, 3, groups=196),
+            nn.BatchNorm2d(196),
             nn.ReLU6(True),
-            nn.Conv2d(512, 1, 1),
+            nn.Conv2d(196, 1, 1),
             nn.Sigmoid()
         )
 
