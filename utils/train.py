@@ -88,9 +88,9 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
             steps += 1
 
             if j % (train_length // 100) == 0:
-                print(f'Epoch {i+1} completed {j/(train_length // 100)*100:.3f}% ' +
+                print(f'Epoch {i+1} completed {j/(train_length // 100):.3f}% ' +
                       f'gen_loss = {generators_loss.item():.3f} ' +
-                      f'discriminators_loss = {discriminators_loss.item():.3f}' +
+                      f'discriminators_loss = {discriminators_loss.item():.3f} ' +
                       f'avg_iter_duration = {avg_time / (train_length // 100)}')
 
                 avg_time = 0
