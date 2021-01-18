@@ -99,6 +99,8 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
         print(f'Discriminator average train loss: {total_loss_discr/steps:.3f}')
         print(f'Generator average train loss: {total_loss_gen/steps:.3f}')
 
+        torch.cuda.empty_cache()
+
         generator_scheduler.step()
         discriminator_scheduler.step()
 

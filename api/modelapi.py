@@ -35,17 +35,18 @@ class GANModelAPI:
             ), lr=2e-4)
         else:
             raise NotImplemented(f'Optimizer {discr_optimizer} is not supported now')
+        step = int(epochs//2)
         if gen_scheduler == 'default':
             self.gen_sched = optim.lr_scheduler.LambdaLR(
                 self.gen_optimizer,
-                lr_lambda=lambda epoch: 0.9 ** (epoch - 99) if epoch > 99 else 1
+                lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
             )
         else:
             raise NotImplemented(f'Generators lr scheduler {gen_scheduler} is not supported now')
         if discr_scheduler == 'default':
             self.discr_sched = optim.lr_scheduler.LambdaLR(
                 self.discr_optimizer,
-                lr_lambda=lambda epoch: 0.9 ** (epoch - 99) if epoch > 99 else 1
+                lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
             )
         else:
             raise NotImplemented(f'Discriminators lr scheduler {discr_scheduler} is not supported now')
