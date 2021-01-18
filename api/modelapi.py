@@ -16,7 +16,8 @@ class GANModelAPI:
         if not torch.cuda.is_available():
             raise BaseException('GPU is not available')
         device = torch.device('cuda')
-        self.dataloader = DataLoader(ImgDataset(files_a, files_b), batch_size=1, shuffle=True)
+        self.dataset = ImgDataset(files_a, files_b)
+        self.dataloader = DataLoader(self.dataset, batch_size=1, shuffle=True)
         self.generator_a2b = Generator().to(device)
         self.generator_b2a = Generator().to(device)
         self.discriminator_a = Discriminator().to(device)
