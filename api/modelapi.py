@@ -26,10 +26,20 @@ class GANModelAPI:
                 self.generator_a2b.parameters(),
                 self.generator_b2a.parameters()
             ), lr=2e-4)
+        elif gen_optimizer == 'AdamW':
+            self.gen_optimizer = optim.AdamW(chain(
+                self.generator_a2b.parameters(),
+                self.generator_b2a.parameters()
+            ), lr=2e-4)
         else:
             raise NotImplemented(f'Optimizer {gen_optimizer} is not supported now')
         if discr_optimizer == 'Adam':
             self.discr_optimizer = optim.Adam(chain(
+                self.discriminator_a.parameters(),
+                self.discriminator_b.parameters()
+            ), lr=2e-4)
+        elif discr_optimizer == 'AdamW':
+            self.discr_optimizer = optim.AdamW(chain(
                 self.discriminator_a.parameters(),
                 self.discriminator_b.parameters()
             ), lr=2e-4)
