@@ -55,12 +55,22 @@ class GANModelAPI:
                 self.gen_optimizer,
                 lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
             )
+        elif gen_scheduler == 'step4':
+            self.gen_sched = optim.lr_scheduler.StepLR(
+                self.gen_optimizer,
+                step_size=4
+            )
         else:
             raise NotImplemented(f'Generators lr scheduler {gen_scheduler} is not supported now')
         if discr_scheduler == 'default':
             self.discr_sched = optim.lr_scheduler.LambdaLR(
                 self.discr_optimizer,
                 lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
+            )
+        elif discr_scheduler == 'step4':
+            self.discr_sched = optim.lr_scheduler.StepLR(
+                self.gen_optimizer,
+                step_size=4
             )
         else:
             raise NotImplemented(f'Discriminators lr scheduler {discr_scheduler} is not supported now')
@@ -80,6 +90,12 @@ class GANModelAPI:
             return train(self.generator_a2b, self.generator_b2a, self.discriminator_a, self.discriminator_b,
                          self.gen_optimizer, self.discr_optimizer, self.gen_sched, self.discr_sched, self.criterion,
                          self.dataloader, max_epochs, hold_discr, threshold)
+
+    def load_models(self, gen_a2b, gen_b2a, discr_a, discr_b):
+        self.generator_a2b = gen_a2b
+        self.generator_b2a = gen_b2a
+        self.discriminator_a = discr_a
+        self.discriminator_b = discr_b
 
     def save_models(self, mode='torch'):
         if mode == 'torch':
