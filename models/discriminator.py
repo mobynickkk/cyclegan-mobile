@@ -29,17 +29,6 @@ class Discriminator(nn.Module):
             nn.Conv2d(96, 96, 3, groups=96, padding=1, padding_mode='reflect'),
             nn.BatchNorm2d(96),
             nn.ReLU6(True),
-            nn.Conv2d(96, 16, 1),
-            nn.BatchNorm2d(16)
-        )
-
-        self.inv_res2 = nn.Sequential(
-            nn.Conv2d(16, 96, 1),
-            nn.BatchNorm2d(96),
-            nn.ReLU6(True),
-            nn.Conv2d(96, 96, 3, groups=96, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(96),
-            nn.ReLU6(True),
             nn.Conv2d(96, 32, 1),
             nn.BatchNorm2d(32)
         )
@@ -59,6 +48,5 @@ class Discriminator(nn.Module):
         x = self.c0(x)
         a = self.inv_res0(x)
         a = self.inv_res1(a) + x
-        x = self.inv_res2(a)
-        x = self.c1(x)
+        x = self.c1(a)
         return x

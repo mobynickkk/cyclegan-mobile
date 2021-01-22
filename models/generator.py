@@ -41,17 +41,6 @@ class Generator(nn.Module):
             nn.BatchNorm2d(256)
         )
 
-        self.bottleneck1 = nn.Sequential(
-            nn.Conv2d(256, 512, 1),
-            nn.BatchNorm2d(512),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(512, 512, 3, groups=512, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(512),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(512, 256, 1),
-            nn.BatchNorm2d(256)
-        )
-
         self.d0 = nn.Sequential(
             nn.Conv2d(256, 128, 3, padding=1, padding_mode='reflect'),
             nn.BatchNorm2d(128),
@@ -93,7 +82,6 @@ class Generator(nn.Module):
         x, i3 = self.pool3(e3)
 
         b = self.bottleneck0(x)
-        b = self.bottleneck1(b) + b
 
         d0 = self.d0(self.unpool0(b, i3) + e3)
         d1 = self.d1(self.unpool1(d0, i2) + e2)
