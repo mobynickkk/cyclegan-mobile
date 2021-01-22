@@ -5,7 +5,7 @@ from time import time
 
 def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, generator_optimizer, discriminator_optimizer,
           generator_scheduler, discriminator_scheduler, criterion, train_loader, max_epochs,
-          hold_discriminators=False):
+          hold_discriminators=False, threshold=0.5):
     """
 
     :param generator_a2b:
@@ -20,6 +20,7 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
     :param train_loader:
     :param max_epochs:
     :param hold_discriminators:
+    :param threshold:
     :return: losses_lists
     """
 
@@ -72,7 +73,7 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
 
             discriminators_loss = a_fake_loss + a_real_loss + b_fake_loss + b_real_loss
 
-            if hold_discriminators and discriminators_loss.item() > 0.5:
+            if hold_discriminators and discriminators_loss.item() > threshold:
                 discriminators_loss.backward()
                 discriminator_optimizer.step()
             elif not hold_discriminators:
