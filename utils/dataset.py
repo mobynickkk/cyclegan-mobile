@@ -67,5 +67,5 @@ class ShiftDataset(Dataset):
         return img_a
 
     def __getitem__(self, index):
-        a, b = self.image_loader(self.files[index])
-        return a, b
+        a = self.image_loader(self.files[index])
+        return a
