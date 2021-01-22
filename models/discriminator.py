@@ -46,7 +46,7 @@ class Discriminator(nn.Module):
 
     def forward(self, x):
         x = self.c0(x)
-        a = self.inv_res0(x)
-        a = self.inv_res1(a) + x
-        x = self.c1(a)
+        x = self.inv_res0(x) + x
+        x = self.inv_res1(x)
+        x = self.c1(x)
         return x
