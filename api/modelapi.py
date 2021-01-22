@@ -5,18 +5,22 @@ from torch.utils.data import DataLoader
 from itertools import chain
 from models.generator import Generator
 from models.discriminator import Discriminator
-from utils.dataset import ImgDataset
-from utils.train import train
+from utils.dataset import ImgDataset, ShiftDataset
+from utils.train import train, shift_train
 
 
 class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
-    def __init__(self, files_a, files_b, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
+    def __init__(self, files_a, files_b, shift=True, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
                  discr_scheduler='default', criterion='bceloss'):
         if not torch.cuda.is_available():
             raise BaseException('GPU is not available')
         device = torch.device('cuda')
-        self.dataloader = DataLoader(ImgDataset(files_a, files_b), batch_size=1, shuffle=True)
+        if shift:
+            self.dataloader1 = DataLoader(ShiftDataset(files_a), batch_size=1, shuffle=True)
+            self.dataloader2 = DataLoader(ShiftDataset(files_b), batch_size=1, shuffle=True)
+        else:
+            self.dataloader = DataLoader(ImgDataset(files_a, files_b), batch_size=1, shuffle=True)
         self.generator_a2b = Generator().to(device)
         self.generator_b2a = Generator().to(device)
         self.discriminator_a = Discriminator().to(device)
@@ -64,11 +68,18 @@ class GANModelAPI:
             self.criterion = nn.BCELoss()
         else:
             raise NotImplemented(f'Criterion {criterion} is not supported now')
+        self.shift = shift
 
-    def train_models(self, max_epochs=200, hold_discr=True, threshold=0.5):
-        return train(self.generator_a2b, self.generator_b2a, self.discriminator_a, self.discriminator_b,
-                     self.gen_optimizer, self.discr_optimizer, self.gen_sched, self.discr_sched, self.criterion,
-                     self.dataloader, max_epochs, hold_discr, threshold)
+    def train_models(self, max_epochs=200, hold_discr=True, threshold=0.5, intermediate_results=None):
+        if self.shift:
+            return shift_train(self.generator_a2b, self.generator_b2a, self.discriminator_a, self.discriminator_b,
+                               self.gen_optimizer, self.discr_optimizer, self.gen_sched, self.discr_sched,
+                               self.criterion, self.dataloader1, self.dataloader2, max_epochs, hold_discr, threshold,
+                               intermediate_results=intermediate_results)
+        else:
+            return train(self.generator_a2b, self.generator_b2a, self.discriminator_a, self.discriminator_b,
+                         self.gen_optimizer, self.discr_optimizer, self.gen_sched, self.discr_sched, self.criterion,
+                         self.dataloader, max_epochs, hold_discr, threshold)
 
     def save_models(self, mode='torch'):
         if mode == 'torch':
