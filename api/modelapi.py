@@ -12,7 +12,7 @@ from utils.train import train, shift_train
 class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
     def __init__(self, files_a, files_b, shift=True, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
-                 discr_scheduler='default', criterion='bceloss'):
+                 discr_scheduler='default', criterion='bceloss', gen_lr=2e-4, discr_lr=2e-4):
         if not torch.cuda.is_available():
             raise BaseException('GPU is not available')
         device = torch.device('cuda')
@@ -29,24 +29,24 @@ class GANModelAPI:
             self.gen_optimizer = optim.Adam(chain(
                 self.generator_a2b.parameters(),
                 self.generator_b2a.parameters()
-            ), lr=2e-4)
+            ), lr=gen_lr)
         elif gen_optimizer == 'AdamW':
             self.gen_optimizer = optim.AdamW(chain(
                 self.generator_a2b.parameters(),
                 self.generator_b2a.parameters()
-            ), lr=2e-4)
+            ), lr=gen_lr)
         else:
             raise NotImplemented(f'Optimizer {gen_optimizer} is not supported now')
         if discr_optimizer == 'Adam':
             self.discr_optimizer = optim.Adam(chain(
                 self.discriminator_a.parameters(),
                 self.discriminator_b.parameters()
-            ), lr=2e-4)
+            ), lr=discr_lr)
         elif discr_optimizer == 'AdamW':
             self.discr_optimizer = optim.AdamW(chain(
                 self.discriminator_a.parameters(),
                 self.discriminator_b.parameters()
-            ), lr=2e-4)
+            ), lr=discr_lr)
         else:
             raise NotImplemented(f'Optimizer {discr_optimizer} is not supported now')
         step = 100
@@ -58,7 +58,8 @@ class GANModelAPI:
         elif gen_scheduler == 'step4':
             self.gen_sched = optim.lr_scheduler.StepLR(
                 self.gen_optimizer,
-                step_size=4
+                step_size=4,
+                gamma=0.9
             )
         else:
             raise NotImplemented(f'Generators lr scheduler {gen_scheduler} is not supported now')
@@ -70,7 +71,8 @@ class GANModelAPI:
         elif discr_scheduler == 'step4':
             self.discr_sched = optim.lr_scheduler.StepLR(
                 self.gen_optimizer,
-                step_size=4
+                step_size=4,
+                gamma=0.9
             )
         else:
             raise NotImplemented(f'Discriminators lr scheduler {discr_scheduler} is not supported now')
