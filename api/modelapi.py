@@ -12,7 +12,7 @@ from utils.train import train
 class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
     def __init__(self, files_a, files_b, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
-                 discr_scheduler='default', criterion='bceloss', epochs=200, hold_discr=True):
+                 discr_scheduler='default', criterion='bceloss'):
         if not torch.cuda.is_available():
             raise BaseException('GPU is not available')
         device = torch.device('cuda')
@@ -64,13 +64,11 @@ class GANModelAPI:
             self.criterion = nn.BCELoss()
         else:
             raise NotImplemented(f'Criterion {criterion} is not supported now')
-        self.max_epochs = epochs
-        self.hold_discr = hold_discr
 
-    def train_models(self):
+    def train_models(self, max_epochs=200, hold_discr=True, threshold=0.5):
         return train(self.generator_a2b, self.generator_b2a, self.discriminator_a, self.discriminator_b,
                      self.gen_optimizer, self.discr_optimizer, self.gen_sched, self.discr_sched, self.criterion,
-                     self.dataloader, self.max_epochs, self.hold_discr)
+                     self.dataloader, max_epochs, hold_discr, threshold)
 
     def save_models(self, mode='torch'):
         if mode == 'torch':
