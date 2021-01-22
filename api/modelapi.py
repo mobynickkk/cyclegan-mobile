@@ -45,7 +45,7 @@ class GANModelAPI:
             ), lr=2e-4)
         else:
             raise NotImplemented(f'Optimizer {discr_optimizer} is not supported now')
-        step = int(epochs//2)
+        step = 100
         if gen_scheduler == 'default':
             self.gen_sched = optim.lr_scheduler.LambdaLR(
                 self.gen_optimizer,
