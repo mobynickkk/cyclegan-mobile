@@ -55,11 +55,10 @@ class GANModelAPI:
                 self.gen_optimizer,
                 lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
             )
-        elif gen_scheduler == 'step4':
-            self.gen_sched = optim.lr_scheduler.StepLR(
+        elif gen_scheduler == 'step4warmup':
+            self.gen_sched = optim.lr_scheduler.LambdaLR(
                 self.gen_optimizer,
-                step_size=4,
-                gamma=0.9
+                lr_lambda=lambda epoch: (1/0.9) ** epoch if epoch < 5 else (1/0.9) ** 5 * 0.9 ** ((epoch - 5) // 4)
             )
         else:
             raise NotImplemented(f'Generators lr scheduler {gen_scheduler} is not supported now')
@@ -68,11 +67,10 @@ class GANModelAPI:
                 self.discr_optimizer,
                 lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
             )
-        elif discr_scheduler == 'step4':
-            self.discr_sched = optim.lr_scheduler.StepLR(
-                self.gen_optimizer,
-                step_size=4,
-                gamma=0.9
+        elif discr_scheduler == 'step4warmup':
+            self.discr_sched = optim.lr_scheduler.LambdaLR(
+                self.discr_optimizer,
+                lr_lambda=lambda epoch: (1/0.9) ** epoch if epoch < 5 else (1/0.9) ** 5 * 0.9 ** ((epoch - 5) // 4)
             )
         else:
             raise NotImplemented(f'Discriminators lr scheduler {discr_scheduler} is not supported now')
