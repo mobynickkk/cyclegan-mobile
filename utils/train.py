@@ -89,16 +89,16 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
             steps += 1
 
             if j % (train_length // 100) == 0:
-                print(f'Epoch {i+1} completed {j/(train_length // 100):.3f}% ' +
+                print(f'Epoch {i + 1} completed {j / (train_length // 100):.3f}% ' +
                       f'gen_loss = {generators_loss.item():.3f} ' +
                       f'discriminators_loss = {discriminators_loss.item():.3f} ' +
                       f'avg_iter_duration = {avg_time / (train_length // 100)}')
 
                 avg_time = 0
 
-        print(f'Epoch {i+1}')
-        print(f'Discriminator average train loss: {total_loss_discr/steps:.3f}')
-        print(f'Generator average train loss: {total_loss_gen/steps:.3f}')
+        print(f'Epoch {i + 1}')
+        print(f'Discriminator average train loss: {total_loss_discr / steps:.3f}')
+        print(f'Generator average train loss: {total_loss_gen / steps:.3f}')
 
         torch.cuda.empty_cache()
 
@@ -108,10 +108,10 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
     return generators_losses, discriminators_losses
 
 
-def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, generator_optimizer, discriminator_optimizer,
+def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, generator_optimizer,
+                discriminator_optimizer,
                 generator_scheduler, discriminator_scheduler, criterion, loader_a, loader_b, max_epochs,
                 hold_discriminators=False, threshold=0.5, intermediate_results=None):
-
     discriminators_losses = []
     generators_losses = []
     train_length = min(len(loader_a), len(loader_b))
@@ -122,6 +122,8 @@ def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, 
         total_loss_gen = 0
         total_loss_discr = 0
         avg_time = 0
+        queue_a = None
+        queue_b = None
 
         for j, t in enumerate(zip(loader_a, loader_b)):
             a, b = t
@@ -130,6 +132,18 @@ def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, 
             fake_a = generator_b2a(b)
             same_b = generator_a2b(b)
             same_a = generator_b2a(a)
+
+            if j == 0:
+                queue_a = fake_a
+                queue_b = fake_b
+            elif j % 50 == 0:
+                queue_a = torch.index_select(queue_a, 0, torch.tensor([x for x in range(1, 50)]))
+                queue_b = torch.index_select(queue_b, 0, torch.tensor([x for x in range(1, 50)]))
+                queue_a = torch.cat((queue_a, fake_a), 0)
+                queue_b = torch.cat((queue_b, fake_b), 0)
+            else:
+                queue_a = torch.cat((queue_a, fake_a), 0)
+                queue_b = torch.cat((queue_b, fake_b), 0)
 
             # Generators losses
 
@@ -153,13 +167,18 @@ def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, 
             a_fake_loss = criterion(pred_fake_a, torch.zeros_like(pred_fake_a))
             pred_real_a = discriminator_a(a)
             a_real_loss = criterion(pred_real_a, torch.ones_like(pred_real_a))
+            pred_hist_a = discriminator_a(queue_a)
+            a_hist_loss = criterion(pred_hist_a, torch.zeros_like(pred_hist_a))
 
             pred_fake_b = discriminator_a(fake_b.detach())
             b_fake_loss = criterion(pred_fake_b, torch.zeros_like(pred_fake_b))
             pred_real_b = discriminator_b(b)
             b_real_loss = criterion(pred_real_b, torch.ones_like(pred_real_b))
+            pred_hist_b = discriminator_b(queue_b)
+            b_hist_loss = criterion(pred_hist_b, torch.zeros_like(pred_hist_b))
 
-            discriminators_loss = a_fake_loss + a_real_loss + b_fake_loss + b_real_loss
+            discriminators_loss = a_fake_loss + a_real_loss + b_fake_loss + b_real_loss + \
+                                  a_hist_loss + b_hist_loss
 
             if hold_discriminators and discriminators_loss.item() > threshold:
                 discriminators_loss.backward()
