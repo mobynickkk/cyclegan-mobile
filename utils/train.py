@@ -116,14 +116,15 @@ def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, 
     generators_losses = []
     train_length = min(len(loader_a), len(loader_b))
 
+    queue_a = None
+    queue_b = None
+
     for i in range(max_epochs):
 
         steps = 0
         total_loss_gen = 0
         total_loss_discr = 0
         avg_time = 0
-        queue_a = None
-        queue_b = None
 
         for j, t in enumerate(zip(loader_a, loader_b)):
             a, b = t
