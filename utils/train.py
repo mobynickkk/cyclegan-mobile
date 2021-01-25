@@ -137,8 +137,8 @@ def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, 
                 queue_a = fake_a.detach()
                 queue_b = fake_b.detach()
             elif j % 50 == 0:
-                queue_a = torch.index_select(queue_a, 0, torch.tensor([x for x in range(1, 50)]))
-                queue_b = torch.index_select(queue_b, 0, torch.tensor([x for x in range(1, 50)]))
+                queue_a = torch.index_select(queue_a, 0, torch.tensor([x for x in range(1, 50)]).to('cuda'))
+                queue_b = torch.index_select(queue_b, 0, torch.tensor([x for x in range(1, 50)]).to('cuda'))
                 queue_a = torch.cat((queue_a, fake_a.detach()), 0)
                 queue_b = torch.cat((queue_b, fake_b.detach()), 0)
             else:
