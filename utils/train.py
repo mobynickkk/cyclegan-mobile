@@ -112,6 +112,7 @@ def shift_train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, 
                 discriminator_optimizer,
                 generator_scheduler, discriminator_scheduler, criterion, loader_a, loader_b, max_epochs,
                 hold_discriminators=False, threshold=0.5, intermediate_results=None):
+
     discriminators_losses = []
     generators_losses = []
     train_length = min(len(loader_a), len(loader_b))
