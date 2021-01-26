@@ -6,25 +6,25 @@ class Generator(nn.Module):
     def __init__(self):
         super(Generator, self).__init__()
         self.e0 = nn.Sequential(
-            nn.Conv2d(3, 16, 3, padding=1, padding_mode='reflect'),
+            nn.Conv2d(3, 16, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(16),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool0 = nn.MaxPool2d(2, return_indices=True)
         self.e1 = nn.Sequential(
-            nn.Conv2d(16, 32, 3, padding=1, padding_mode='reflect'),
+            nn.Conv2d(16, 32, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(32),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool1 = nn.MaxPool2d(2, return_indices=True)
         self.e2 = nn.Sequential(
-            nn.Conv2d(32, 64, 3, padding=1, padding_mode='reflect'),
+            nn.Conv2d(32, 64, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool2 = nn.MaxPool2d(2, return_indices=True)
         self.e3 = nn.Sequential(
-            nn.Conv2d(64, 128, 3, padding=1, padding_mode='reflect'),
+            nn.Conv2d(64, 128, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(128),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
