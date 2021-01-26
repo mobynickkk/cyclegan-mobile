@@ -3,10 +3,10 @@ import torch.nn as nn
 import torch.optim as optim
 from torch.utils.data import DataLoader
 from itertools import chain
-from models.generator import Generator
-from models.discriminator import Discriminator
-from utils.dataset import ImgDataset, ShiftDataset
-from utils.train import train, shift_train
+from .models.generator import Generator
+from .models.discriminator import Discriminator
+from .utils.dataset import ImgDataset, ShiftDataset
+from .utils.train import train, shift_train
 
 
 class GANModelAPI:
