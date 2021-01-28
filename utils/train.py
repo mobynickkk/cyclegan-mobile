@@ -5,9 +5,10 @@ from time import time
 
 def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, generator_optimizer, discriminator_optimizer,
           generator_scheduler, discriminator_scheduler, criterion, train_loader, max_epochs,
-          hold_discriminators=False, threshold=0.5):
+          hold_discriminators=False, threshold=0.5, intermediate_results=None):
     """
 
+    :param intermediate_results:
     :param generator_a2b:
     :param generator_b2a:
     :param discriminator_a:

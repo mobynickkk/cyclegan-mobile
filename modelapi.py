@@ -93,7 +93,7 @@ class GANModelAPI:
         else:
             return train(self.generator_a2b, self.generator_b2a, self.discriminator_a, self.discriminator_b,
                          self.gen_optimizer, self.discr_optimizer, self.gen_sched, self.discr_sched, self.criterion,
-                         self.dataloader, max_epochs, hold_discr, threshold)
+                         self.dataloader, max_epochs, hold_discr, threshold, intermediate_results)
 
     def load_models(self, gen_a2b, gen_b2a, discr_a, discr_b):
         self.generator_a2b = gen_a2b
