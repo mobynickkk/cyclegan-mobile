@@ -28,6 +28,9 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
     generators_losses = []
     train_length = len(train_loader)
 
+    queue_a = None
+    queue_b = None
+
     for i in range(max_epochs):
 
         steps = 0
@@ -42,6 +45,18 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
             fake_a = generator_b2a(b)
             same_b = generator_a2b(b)
             same_a = generator_b2a(a)
+
+            if (i + j) == 0:
+                queue_a = fake_a.detach()
+                queue_b = fake_b.detach()
+            elif (i * train_length + j) < 50:
+                queue_a = torch.cat((queue_a, fake_a.detach()), 0)
+                queue_b = torch.cat((queue_b, fake_b.detach()), 0)
+            else:
+                queue_a = torch.index_select(queue_a, 0, torch.tensor([x for x in range(1, 50)]).to('cuda'))
+                queue_b = torch.index_select(queue_b, 0, torch.tensor([x for x in range(1, 50)]).to('cuda'))
+                queue_a = torch.cat((queue_a, fake_a.detach()), 0)
+                queue_b = torch.cat((queue_b, fake_b.detach()), 0)
 
             # Generators losses
 
@@ -65,13 +80,18 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
             a_fake_loss = criterion(pred_fake_a, torch.zeros_like(pred_fake_a))
             pred_real_a = discriminator_a(a)
             a_real_loss = criterion(pred_real_a, torch.ones_like(pred_real_a))
+            pred_hist_a = discriminator_a(queue_a)
+            a_hist_loss = criterion(pred_hist_a, torch.zeros_like(pred_hist_a))
 
             pred_fake_b = discriminator_a(fake_b.detach())
             b_fake_loss = criterion(pred_fake_b, torch.zeros_like(pred_fake_b))
             pred_real_b = discriminator_b(b)
             b_real_loss = criterion(pred_real_b, torch.ones_like(pred_real_b))
+            pred_hist_b = discriminator_b(queue_b)
+            b_hist_loss = criterion(pred_hist_b, torch.zeros_like(pred_hist_b))
 
-            discriminators_loss = a_fake_loss + a_real_loss + b_fake_loss + b_real_loss
+            discriminators_loss = a_fake_loss + a_real_loss + b_fake_loss + b_real_loss + \
+                a_hist_loss + b_hist_loss
 
             if hold_discriminators and discriminators_loss.item() > threshold:
                 discriminators_loss.backward()
@@ -99,6 +119,10 @@ def train(generator_a2b, generator_b2a, discriminator_a, discriminator_b, genera
         print(f'Epoch {i + 1}')
         print(f'Discriminator average train loss: {total_loss_discr / steps:.3f}')
         print(f'Generator average train loss: {total_loss_gen / steps:.3f}')
+
+        if intermediate_results:
+            a, b = next(iter(train_loader))
+            intermediate_results(generator_a2b(a))
 
         torch.cuda.empty_cache()
 
