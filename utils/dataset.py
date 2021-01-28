@@ -27,8 +27,8 @@ class ImgDataset(Dataset):
         img_b = Image.open(img_b)
         img_b.load()
         loader = transforms.Compose([
-            transforms.Resize(512),
-            transforms.CenterCrop(512),
+            transforms.Resize(256),
+            transforms.CenterCrop(256),
             transforms.ToTensor()
         ])
         img_a = loader(img_a).to(device)
