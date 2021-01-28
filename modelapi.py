@@ -53,7 +53,9 @@ class GANModelAPI:
         if gen_scheduler == 'default':
             self.gen_sched = optim.lr_scheduler.LambdaLR(
                 self.gen_optimizer,
-                lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
+                lr_lambda=lambda epoch: (1/0.9) ** epoch if epoch < 5 else (0.9 ** (epoch - step)
+                                                                            if epoch > step
+                                                                            else (1/0.9) ** 5)
             )
         elif gen_scheduler == 'step10warmup':
             self.gen_sched = optim.lr_scheduler.LambdaLR(
@@ -65,7 +67,9 @@ class GANModelAPI:
         if discr_scheduler == 'default':
             self.discr_sched = optim.lr_scheduler.LambdaLR(
                 self.discr_optimizer,
-                lr_lambda=lambda epoch: 0.9 ** (epoch - step) if epoch > step else 1
+                lr_lambda=lambda epoch: (1 / 0.9) ** epoch if epoch < 5 else (0.9 ** (epoch - step)
+                                                                              if epoch > step
+                                                                              else (1 / 0.9) ** 5)
             )
         elif discr_scheduler == 'step10warmup':
             self.discr_sched = optim.lr_scheduler.LambdaLR(
