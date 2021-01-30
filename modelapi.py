@@ -12,7 +12,7 @@ from .utils.train import train, shift_train
 class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
     def __init__(self, files_a, files_b, shift=True, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
-                 discr_scheduler='default', criterion='bceloss', gen_lr=2e-4, discr_lr=2e-4):
+                 discr_scheduler='default', step=25, criterion='bceloss', gen_lr=2e-4, discr_lr=2e-4):
         if not torch.cuda.is_available():
             raise BaseException('GPU is not available')
         device = torch.device('cuda')
@@ -49,7 +49,6 @@ class GANModelAPI:
             ), lr=discr_lr)
         else:
             raise NotImplemented(f'Optimizer {discr_optimizer} is not supported now')
-        step = 100
         if gen_scheduler == 'default':
             self.gen_sched = optim.lr_scheduler.LambdaLR(
                 self.gen_optimizer,
