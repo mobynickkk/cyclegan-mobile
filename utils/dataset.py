@@ -63,7 +63,7 @@ class ShiftDataset(Dataset):
             transforms.CenterCrop(64),
             transforms.ToTensor()
         ])
-        img_a = loader(img_a).to(device) / 255
+        img_a = loader(img_a).to(device)
         return img_a
 
     def __getitem__(self, index):
