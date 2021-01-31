@@ -42,7 +42,7 @@ class Generator(nn.Module):
         )
 
         self.d0 = nn.Sequential(
-            nn.Conv2d(128, 64, 3, dilation=2, padding=1, padding_mode='reflect'),
+            nn.Conv2d(128, 64, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(64),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
@@ -50,7 +50,7 @@ class Generator(nn.Module):
         self.unpool0 = nn.MaxUnpool2d(2)
 
         self.d1 = nn.Sequential(
-            nn.Conv2d(64, 32, 3, dilation=2, padding=1, padding_mode='reflect'),
+            nn.Conv2d(64, 32, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(32),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
@@ -58,7 +58,7 @@ class Generator(nn.Module):
         self.unpool1 = nn.MaxUnpool2d(2)
 
         self.d2 = nn.Sequential(
-            nn.Conv2d(32, 16, 3, dilation=2, padding=1, padding_mode='reflect'),
+            nn.Conv2d(32, 16, 3, dilation=2, padding=2, padding_mode='reflect'),
             nn.BatchNorm2d(16),
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
@@ -66,7 +66,7 @@ class Generator(nn.Module):
         self.unpool2 = nn.MaxUnpool2d(2)
 
         self.d3 = nn.Sequential(
-            nn.Conv2d(16, 3, 3, dilation=2, padding=1, padding_mode='reflect')
+            nn.Conv2d(16, 3, 3, dilation=2, padding=2, padding_mode='reflect')
         )
 
         self.unpool3 = nn.MaxUnpool2d(2)
