@@ -1,6 +1,6 @@
 from sys import argv
 import argparse
-from .modelapi import GANModelAPI
+from modelapi import GANModelAPI
 import pickle
 
 
