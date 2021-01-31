@@ -18,9 +18,7 @@ To download it, just run following command in your terminal:
 
 After downloading the dataset you should just run a single script with python:
 
-    python train_models.py \
-        -ds1 ds/summer2winter_yosemite/trainA \ 
-        -ds2 ds/summer2winter_yosemite/trainB
+    python train_models.py -ds1 ds/summer2winter_yosemite/trainA -ds2 ds/summer2winter_yosemite/trainB
     
 And after some time you will get the result!
 
