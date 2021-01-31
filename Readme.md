@@ -22,7 +22,13 @@ After downloading the dataset you should just run a single script with python:
     
 And after some time you will get the result!
 
+#### Docs to training script
+
 To customize training, you can change some variables for models with keywords in this command:
+
+`-ds1`: sets the directory of your dataset A
+
+`-ds2`: sets the directory of your dataset B
 
 `-sh`: can be `True` or `False`. Sets whether the pairs in datasets are shuffled or not (Positively affected on my tests)
 
