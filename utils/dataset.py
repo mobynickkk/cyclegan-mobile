@@ -59,8 +59,8 @@ class ShiftDataset(Dataset):
         img_a = Image.open(img_a)
         img_a.load()
         loader = transforms.Compose([
-            transforms.Resize(64),
-            transforms.CenterCrop(64),
+            transforms.Resize(128),
+            transforms.CenterCrop(128),
             transforms.ToTensor()
         ])
         img_a = loader(img_a).to(device)
