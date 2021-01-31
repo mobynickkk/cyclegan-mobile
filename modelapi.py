@@ -12,15 +12,15 @@ from .utils.train import train, shift_train
 class GANModelAPI:
     """Класс для упрощенного создания и обучения модели"""
     def __init__(self, files_a, files_b, shift=True, gen_optimizer='Adam', discr_optimizer='Adam', gen_scheduler='default',
-                 discr_scheduler='default', step=25, criterion='bceloss', gen_lr=2e-4, discr_lr=2e-4):
+                 discr_scheduler='default', step=25, criterion='bceloss', gen_lr=2e-4, discr_lr=2e-4, image_size=256):
         if not torch.cuda.is_available():
             raise BaseException('GPU is not available')
         device = torch.device('cuda')
         if shift:
-            self.dataloader1 = DataLoader(ShiftDataset(files_a), batch_size=1, shuffle=True)
-            self.dataloader2 = DataLoader(ShiftDataset(files_b), batch_size=1, shuffle=True)
+            self.dataloader1 = DataLoader(ShiftDataset(files_a, image_size), batch_size=1, shuffle=True)
+            self.dataloader2 = DataLoader(ShiftDataset(files_b, image_size), batch_size=1, shuffle=True)
         else:
-            self.dataloader = DataLoader(ImgDataset(files_a, files_b), batch_size=1, shuffle=True)
+            self.dataloader = DataLoader(ImgDataset(files_a, files_b, image_size), batch_size=1, shuffle=True)
         self.generator_a2b = Generator().to(device)
         self.generator_b2a = Generator().to(device)
         self.discriminator_a = Discriminator().to(device)
