@@ -6,7 +6,12 @@ class Generator(nn.Module):
 
     def __init__(self):
         super(Generator, self).__init__()
-        self.e0 = TransformerBlock(3, 6, 3)
+        self.e0 = nn.Sequential(
+            nn.ReflectionPad2d(2),
+            nn.Conv2d(3, 6, 3, dilation=2),
+            nn.BatchNorm2d(6),
+            nn.ReLU(True)
+        )
         self.pool0 = nn.MaxPool2d(2, return_indices=True)
         self.e1 = TransformerBlock(6, 8, 3)
         self.pool1 = nn.MaxPool2d(2, return_indices=True)
@@ -29,7 +34,7 @@ class Generator(nn.Module):
 
         self.unpool2 = nn.MaxUnpool2d(2)
 
-        self.d3 = TransformerBlock(6, 3, 4)
+        self.d3 = nn.Conv2d(6, 3, 1)
 
         self.unpool3 = nn.MaxUnpool2d(2)
 
