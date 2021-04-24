@@ -89,7 +89,7 @@ class TransformerBlock(nn.Module):
         super(TransformerBlock, self).__init__()
 
         self.self_attention = ResidualBlock(MultiHeadAttention(in_channels, n_heads))
-        self.feed_forward = ResidualBlock(MobileBlock(in_channels, out_channels))
+        self.feed_forward = MobileBlock(in_channels, out_channels)
 
     def forward(self, x):
         x = self.self_attention(x)
