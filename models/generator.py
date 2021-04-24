@@ -1,4 +1,5 @@
 import torch.nn as nn
+from .modules import TransformerBlock
 
 
 class Generator(nn.Module):
@@ -11,57 +12,24 @@ class Generator(nn.Module):
             nn.LeakyReLU(negative_slope=0.2, inplace=True)
         )
         self.pool0 = nn.MaxPool2d(2, return_indices=True)
-        self.e1 = nn.Sequential(
-            nn.Conv2d(16, 32, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(32),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.e1 = TransformerBlock(16)
         self.pool1 = nn.MaxPool2d(2, return_indices=True)
-        self.e2 = nn.Sequential(
-            nn.Conv2d(32, 64, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(64),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.e2 = TransformerBlock(16)
         self.pool2 = nn.MaxPool2d(2, return_indices=True)
-        self.e3 = nn.Sequential(
-            nn.Conv2d(64, 128, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(128),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.e3 = TransformerBlock(16)
         self.pool3 = nn.MaxPool2d(2, return_indices=True)
 
-        self.bottleneck0 = nn.Sequential(
-            nn.Conv2d(128, 256, 1),
-            nn.BatchNorm2d(256),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(256, 256, 3, groups=256, padding=1, padding_mode='reflect'),
-            nn.BatchNorm2d(256),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True),
-            nn.Conv2d(256, 128, 1),
-            nn.BatchNorm2d(128)
-        )
+        self.bottleneck0 = TransformerBlock(16)
 
-        self.d0 = nn.Sequential(
-            nn.Conv2d(128, 64, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(64),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.d0 = TransformerBlock(16)
 
         self.unpool0 = nn.MaxUnpool2d(2)
 
-        self.d1 = nn.Sequential(
-            nn.Conv2d(64, 32, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(32),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.d1 = TransformerBlock(16)
 
         self.unpool1 = nn.MaxUnpool2d(2)
 
-        self.d2 = nn.Sequential(
-            nn.Conv2d(32, 16, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.d2 = TransformerBlock(16)
 
         self.unpool2 = nn.MaxUnpool2d(2)
 
