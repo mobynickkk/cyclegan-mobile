@@ -61,6 +61,10 @@ class MultiHeadAttention(nn.Module):
         x = torch.cat([head(x) for head in self.heads], 1)
         return self.compress(x)
 
+    def to(self, *args, **kwargs):
+        self.heads = [head.to(*args, **kwargs) for head in self.heads]
+        super(MultiHeadAttention, self).to(*args, **kwargs)
+
 
 class MobileBlock(nn.Module):
 
