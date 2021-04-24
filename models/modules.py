@@ -43,27 +43,23 @@ class SelfAttention(nn.Module):
 
 class MultiHeadAttention(nn.Module):
 
-    def __init__(self, in_channels, n_heads=8):
+    def __init__(self, in_channels, n_heads=8, device='cuda'):
         super(MultiHeadAttention, self).__init__()
 
         self.heads = []
 
         for _ in range(n_heads):
-            self.heads.append(ResidualBlock(SelfAttention(in_channels, n_heads)))
+            self.heads.append(ResidualBlock(SelfAttention(in_channels, n_heads)).to(device))
 
         self.compress = nn.Sequential(
             nn.Conv2d(in_channels*n_heads, in_channels, 1),
             nn.BatchNorm2d(in_channels),
             nn.ReLU(True)
-        )
+        ).to(device)
 
     def forward(self, x):
         x = torch.cat([head(x) for head in self.heads], 1)
         return self.compress(x)
-
-    def to(self, *args, **kwargs):
-        self.heads = [head.to(*args, **kwargs) for head in self.heads]
-        super(MultiHeadAttention, self).to(*args, **kwargs)
 
 
 class MobileBlock(nn.Module):
