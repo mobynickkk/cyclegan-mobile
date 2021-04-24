@@ -28,13 +28,13 @@ class SelfAttention(nn.Module):
 
     def forward(self, x):
         B, C, W, H = x.size()
-        query = self.query_conv(x).view(B, -1, W * H).permute(0, 2, 1)
+        query = self.query_conv(x).view(B, -1, W * H).permute(0, 2, 1).contiguous()
         key = self.key_conv(x).view(B, -1, W * H)
         energy = torch.bmm(query, key)
         attention = self.softmax(energy)
         value = self.value_conv(x).view(B, -1, W * H)
 
-        out = torch.bmm(value, attention.permute(0, 2, 1))
+        out = torch.bmm(value, attention.permute(0, 2, 1).contiguous())
         out = out.view(B, C, W, H)
 
         out = self.gamma * out + x
