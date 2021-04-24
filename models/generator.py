@@ -6,36 +6,30 @@ class Generator(nn.Module):
 
     def __init__(self):
         super(Generator, self).__init__()
-        self.e0 = nn.Sequential(
-            nn.Conv2d(3, 16, 3, dilation=2, padding=2, padding_mode='reflect'),
-            nn.BatchNorm2d(16),
-            nn.LeakyReLU(negative_slope=0.2, inplace=True)
-        )
+        self.e0 = TransformerBlock(3, 16, 3)
         self.pool0 = nn.MaxPool2d(2, return_indices=True)
-        self.e1 = TransformerBlock(16)
+        self.e1 = TransformerBlock(16, 16)
         self.pool1 = nn.MaxPool2d(2, return_indices=True)
-        self.e2 = TransformerBlock(16)
+        self.e2 = TransformerBlock(16, 16)
         self.pool2 = nn.MaxPool2d(2, return_indices=True)
-        self.e3 = TransformerBlock(16)
+        self.e3 = TransformerBlock(16, 16)
         self.pool3 = nn.MaxPool2d(2, return_indices=True)
 
-        self.bottleneck0 = TransformerBlock(16)
+        self.bottleneck0 = TransformerBlock(16, 16)
 
-        self.d0 = TransformerBlock(16)
+        self.d0 = TransformerBlock(16, 16)
 
         self.unpool0 = nn.MaxUnpool2d(2)
 
-        self.d1 = TransformerBlock(16)
+        self.d1 = TransformerBlock(16, 16)
 
         self.unpool1 = nn.MaxUnpool2d(2)
 
-        self.d2 = TransformerBlock(16)
+        self.d2 = TransformerBlock(16, 16)
 
         self.unpool2 = nn.MaxUnpool2d(2)
 
-        self.d3 = nn.Sequential(
-            nn.Conv2d(16, 3, 3, dilation=2, padding=2, padding_mode='reflect')
-        )
+        self.d3 = TransformerBlock(16, 3)
 
         self.unpool3 = nn.MaxUnpool2d(2)
 
