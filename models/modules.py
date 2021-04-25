@@ -43,19 +43,21 @@ class SelfAttention(nn.Module):
 
 class MultiHeadAttention(nn.Module):
 
-    def __init__(self, in_channels, n_heads=8, device='cuda'):
+    def __init__(self, in_channels, n_heads=8):
         super(MultiHeadAttention, self).__init__()
 
-        self.heads = []
+        heads = []
 
         for _ in range(n_heads):
-            self.heads.append(ResidualBlock(SelfAttention(in_channels, n_heads)).to(device))
+            heads.append(ResidualBlock(SelfAttention(in_channels, n_heads)))
+
+        self.heads = nn.ModuleList(heads)
 
         self.compress = nn.Sequential(
             nn.Conv2d(in_channels*n_heads, in_channels, 1),
             nn.BatchNorm2d(in_channels),
             nn.ReLU(True)
-        ).to(device)
+        )
 
     def forward(self, x):
         x = torch.cat([head(x) for head in self.heads], 1)
