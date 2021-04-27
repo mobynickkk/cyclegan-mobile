@@ -41,6 +41,36 @@ class SelfAttention(nn.Module):
         return out
 
 
+class Tokenizer(nn.Module):
+
+    def __init__(self):
+        super().__init__()
+
+        self.downscale = nn.AdaptiveMaxPool1d(512)
+
+    def forward(self, x):
+        B, C, W, H = x.size()
+        x = x.permute(0, 2, 3, 1).contiguous().view(B, W * H, C)
+        return self.downscale(x)
+
+
+class LinearSelfAttention(nn.Module):
+
+    def __init__(self, scale):
+        super().__init__()
+
+        self.query = nn.Linear(512, 512 // scale)
+        self.key = nn.Linear(512, 512 // scale)
+        self.value = nn.Linear(512, 512)
+        self.gamma = nn.Parameter(torch.zeros(1))
+
+        self.softmax = nn.Softmax(dim=-1)
+
+    def forward(self, x):
+        # TODO
+        pass
+
+
 class MultiHeadAttention(nn.Module):
 
     def __init__(self, in_channels, n_heads=8):
