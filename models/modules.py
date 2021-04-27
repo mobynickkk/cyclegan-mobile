@@ -43,10 +43,10 @@ class SelfAttention(nn.Module):
 
 class Tokenizer(nn.Module):
 
-    def __init__(self):
+    def __init__(self, emb_size):
         super().__init__()
 
-        self.downscale = nn.AdaptiveMaxPool1d(512)
+        self.downscale = nn.AdaptiveMaxPool1d(emb_size)
 
     def forward(self, x):
         B, C, W, H = x.size()
@@ -56,12 +56,12 @@ class Tokenizer(nn.Module):
 
 class LinearSelfAttention(nn.Module):
 
-    def __init__(self, scale):
+    def __init__(self, emb_size, scale):
         super().__init__()
 
-        self.query = nn.Linear(512, 512 // scale)
-        self.key = nn.Linear(512, 512 // scale)
-        self.value = nn.Linear(512, 512)
+        self.query = nn.Linear(emb_size, emb_size // scale)
+        self.key = nn.Linear(emb_size, emb_size // scale)
+        self.value = nn.Linear(emb_size, emb_size)
         self.gamma = nn.Parameter(torch.zeros(1))
 
         self.softmax = nn.Softmax(dim=-1)
@@ -96,7 +96,7 @@ class MultiHeadAttention(nn.Module):
 
 class MobileBlock(nn.Module):
 
-    def __init__(self, in_channels, out_channels, scale=6):
+    def __init__(self, in_channels, out_channels, stride=1, scale=6):
         super(MobileBlock, self).__init__()
 
         self.layers = nn.Sequential(
@@ -104,7 +104,8 @@ class MobileBlock(nn.Module):
             nn.BatchNorm2d(in_channels * scale),
             nn.ReLU6(True),
             nn.ReflectionPad2d(2),
-            nn.Conv2d(in_channels * scale, in_channels * scale, 3, dilation=2, groups=in_channels * scale),
+            nn.Conv2d(in_channels * scale, in_channels * scale, 3, dilation=2, stride=stride,
+                      groups=in_channels * scale),
             nn.BatchNorm2d(in_channels * scale),
             nn.ReLU6(True),
             nn.Conv2d(in_channels * scale, out_channels, 1),
@@ -117,11 +118,14 @@ class MobileBlock(nn.Module):
 
 class TransformerBlock(nn.Module):
 
-    def __init__(self, in_channels, out_channels, n_heads=8):
+    def __init__(self, in_channels, out_channels=0, n_heads=8):
         super(TransformerBlock, self).__init__()
 
         self.self_attention = ResidualBlock(MultiHeadAttention(in_channels, n_heads))
-        self.feed_forward = MobileBlock(in_channels, out_channels)
+        if not out_channels:
+            self.feed_forward = ResidualBlock(MobileBlock(in_channels, in_channels))
+        else:
+            self.feed_forward = MobileBlock(in_channels, out_channels)
 
     def forward(self, x):
         x = self.self_attention(x)
